@@ -15,15 +15,20 @@ from docx.text.tabstops import TabStop, TabStops
 
 import pytest
 
-from ..unitutil.cxml import element
+from ..unitutil.cxml import element, xml
 from ..unitutil.mock import call, class_mock, instance_mock
 
 
 class DescribeTabStop(object):
 
-    def it_knows_its_position(self, position_fixture):
-        tab_stop, expected_value = position_fixture
+    def it_knows_its_position(self, position_get_fixture):
+        tab_stop, expected_value = position_get_fixture
         assert tab_stop.position == expected_value
+
+    def it_can_change_its_position(self, position_set_fixture):
+        tab_stop, value, expected_xml = position_set_fixture
+        tab_stop.position = value
+        assert tab_stop._element.xml == expected_xml
 
     def it_knows_its_alignment(self, alignment_fixture):
         tab_stop, expected_value = alignment_fixture
@@ -57,9 +62,19 @@ class DescribeTabStop(object):
         return tab_stop, expected_value
 
     @pytest.fixture
-    def position_fixture(self, request):
+    def position_get_fixture(self, request):
         tab_stop = TabStop(element('w:tab{w:pos=720}'))
         return tab_stop, Twips(720)
+
+    @pytest.fixture(params=[
+        ('w:tab{w:pos=360}', Twips(720),  'w:tab{w:pos=720}'),
+        ('w:tab{w:pos=360}', Twips(-720), 'w:tab{w:pos=-720}')
+    ])
+    def position_set_fixture(self, request):
+        tab_stop_cxml, value, expected_cxml = request.param
+        tab_stop = TabStop(element(tab_stop_cxml))
+        expected_xml = xml(expected_cxml)
+        return tab_stop, value, expected_xml
 
 
 class DescribeTabStops(object):

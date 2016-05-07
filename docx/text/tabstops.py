@@ -79,3 +79,7 @@ class TabStop(ElementProxy):
         paragraph. May be positive or negative.
         """
         return self._element.pos
+
+    @position.setter
+    def position(self, value):
+        self._element.pos = value
