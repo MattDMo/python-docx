@@ -30,9 +30,14 @@ class DescribeTabStop(object):
         tab_stop.position = value
         assert tab_stop._element.xml == expected_xml
 
-    def it_knows_its_alignment(self, alignment_fixture):
-        tab_stop, expected_value = alignment_fixture
+    def it_knows_its_alignment(self, alignment_get_fixture):
+        tab_stop, expected_value = alignment_get_fixture
         assert tab_stop.alignment == expected_value
+
+    def it_can_change_its_alignment(self, alignment_set_fixture):
+        tab_stop, value, expected_xml = alignment_set_fixture
+        tab_stop.alignment = value
+        assert tab_stop._element.xml == expected_xml
 
     def it_knows_its_leader(self, leader_fixture):
         tab_stop, expected_value = leader_fixture
@@ -44,11 +49,22 @@ class DescribeTabStop(object):
         ('w:tab{w:val=left}',  'LEFT'),
         ('w:tab{w:val=right}', 'RIGHT'),
     ])
-    def alignment_fixture(self, request):
+    def alignment_get_fixture(self, request):
         tab_stop_cxml, member = request.param
         tab_stop = TabStop(element(tab_stop_cxml))
         expected_value = getattr(WD_TAB_ALIGNMENT, member)
         return tab_stop, expected_value
+
+    @pytest.fixture(params=[
+        ('w:tab{w:val=left}',  'RIGHT', 'w:tab{w:val=right}'),
+        ('w:tab{w:val=right}', 'LEFT',  'w:tab{w:val=left}'),
+    ])
+    def alignment_set_fixture(self, request):
+        tab_stop_cxml, member, expected_cxml = request.param
+        tab_stop = TabStop(element(tab_stop_cxml))
+        expected_xml = xml(expected_cxml)
+        value = getattr(WD_TAB_ALIGNMENT, member)
+        return tab_stop, value, expected_xml
 
     @pytest.fixture(params=[
         ('w:tab',                'SPACES'),
