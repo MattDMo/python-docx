@@ -72,9 +72,14 @@ class TabStop(ElementProxy):
     def leader(self):
         """
         A member of :ref:`WdTabLeader` specifying a repeating character used
-        as a "leader", filling in the space spanned by this tab.
+        as a "leader", filling in the space spanned by this tab. Assigning
+        |None| produces the same result as assigning `WD_TAB_LEADER.SPACES`.
         """
         return self._element.leader
+
+    @leader.setter
+    def leader(self, value):
+        self._element.leader = value
 
     @property
     def position(self):
