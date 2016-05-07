@@ -56,6 +56,23 @@ def when_I_add_a_tab_stop(context):
     tab_stops.add_tab(Inches(1.75))
 
 
+@when('I assign {member} to tab_stop.alignment')
+def when_I_assign_member_to_tab_stop_alignment(context, member):
+    value = getattr(WD_TAB_ALIGNMENT, member)
+    context.tab_stop.alignment = value
+
+
+@when('I assign {member} to tab_stop.leader')
+def when_I_assign_member_to_tab_stop_leader(context, member):
+    value = getattr(WD_TAB_LEADER, member)
+    context.tab_stop.leader = value
+
+
+@when('I assign {value} to tab_stop.position')
+def when_I_assign_value_to_tab_stop_value(context, value):
+    context.tab_stop.position = int(value)
+
+
 @when('I call tab_stops.clear_all()')
 def when_I_call_tab_stops_clear_all(context):
     tab_stops = context.tab_stops
